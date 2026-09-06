@@ -6,8 +6,8 @@ local Library = require(ReplicatedStorage:WaitForChild("Library"))
 -- ====================================================================
 -- Initialize the main window with title, version, keybind, and icon logo.
 local window = Library:CreateWindow({
-	Title = "Vietnam - On Top",
-	Version = "1.0.0",
+	Title = "Unnamed-UI",
+	Version = "0.0.1",
 	Keybind = Enum.KeyCode.RightControl, -- Keybind to show/hide the UI
 	Image = "rbxassetid://10566696606"     -- Top-left logo asset ID
 })
