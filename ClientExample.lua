@@ -1,100 +1,61 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Library = require(ReplicatedStorage:WaitForChild("Library"))
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Unname-Creator/Unnamed-UI/refs/heads/main/main.lua"))()
 
--- ====================================================================
--- 1. CREATE MAIN WINDOW
--- ====================================================================
--- Initialize the main window with title, version, keybind, and icon logo.
-local window = Library:CreateWindow({
-	Title = "Unnamed-UI",
-	Version = "0.0.1",
-	Keybind = Enum.KeyCode.RightControl, -- Keybind to show/hide the UI
-	Image = "rbxassetid://10566696606"     -- Top-left logo asset ID
+local window = library:CreateWindow({
+    Title = "My UI",
+    Version = "0.0.2",
+    Keybind = Enum.KeyCode.RightControl,
+    Image = "rbxassetid://7258425744",
 })
+--notify
+local function Notification(text, time)
+    window:Notify("Notification!",text ,time)
+end 
 
--- ====================================================================
--- 2. CREATE TABS
--- ====================================================================
-local MainTab   = window:AddTab("Main")     -- Main feature tab
-local PlayerTab = window:AddTab("Player")   -- Player modifications tab
-local MiscTab   = window:AddTab("Misc")     -- Miscellaneous utility tab
+    Notification("UI has active", 3)
+--tab
+local tab = {
+    ["Home"] = window:AddTab("Home"),
+    ["Player"] = window:AddTab("ButtonTest"),
+    ["Setting"] = window:AddTab("Setting")
+}
 
--- ====================================================================
--- TAB 1: MAIN (SECTION, LABEL, BUTTON, TOGGLE, DROPDOWN)
--- ====================================================================
+local FunctionHome = {
+    tab.Home:AddSection("Home"),
+    tab.Home:AddLabel("Open ButtonTest for all button"),
+}
 
--- [SECTION]: Categorizes controls into dedicated visual groups
-MainTab:AddSection("🌾 Farming Zone")
+local FunctionPlayer = {
+        tab.Player:AddSection("Button, Drop, toggle, slide, textbox"),
+    ["Button"] = tab.Player:AddButton("Click the Button","Click Me",function() Notification("Is Clicked", 2) end),
+    ["Dropdown"] = tab.Player:AddDropdown("DropDown", {"one","two","three","four","five"}, "one",function(selectedOption)
+    Notification("Player Choose" .. " " .. tostring(selectedOption), 2) end),
+    ["toggle"] = tab.Player:AddToggle("Is toggle", false, function(state) 
+        if state == true then
+            Notification("true",2)
+        else
+            Notification("false",2)
+        end
+    end),
 
--- [LABEL]: Displays informative guide text or warnings
-MainTab:AddLabel("📌 Note: Enable Auto Equip before farming")
+    ["slider"] = tab.Player:AddSlider("WalkSpeed", 16, 200 ,16 ,function(value)
+    local player = game:GetService("Players").LocalPlayer
+    local character = player.Character
+    local humanoid = character.Humanoid
 
--- [TOGGLE]: On/Off switch (returns true when enabled, false when disabled)
--- Parameters: ("Toggle Name", Default State (true/false), Callback Function)
-MainTab:AddToggle("Auto Farm Mobs", false, function(state)
-	if state then
-		print("Auto Farm ENABLED!")
-		window:Notify("Auto Farm", "Farming mobs automatically...")
-	else
-		print("Auto Farm DISABLED!")
-		window:Notify("Auto Farm", "Stopped farming mobs!")
-	end
-end)
+    humanoid.WalkSpeed = value
+    end),
 
--- [BUTTON]: Triggers a single action on click
--- Parameters: ("Feature Name", "Button Label", Callback Function)
-MainTab:AddButton("Collect All Chests", "Collect", function()
-	print("Collecting chests...")
-	window:Notify("Chests", "All chests collected successfully!")
-end)
+    tab.Player:AddSection("Redeem text and enter for active"),
 
--- [DROPDOWN]: Selectable option menu (Select 1 from multiple items)
--- Parameters: ("Dropdown Name", {Options Table}, "Default Option", Callback Function)
-MainTab:AddDropdown("Select Farm Spot", {"Monkey Area", "Snow Area", "Desert Area", "Volcano Area"}, "Monkey Area", function(selectedOption)
-	print("Selected farm spot:", selectedOption)
-	window:Notify("Farm Spot", "Target changed to: " .. tostring(selectedOption))
-end)
+    ["boxtext"] = tab.Player:AddInput("Redeem text", "Enter text here...", function(text, enterPressed)
+	    if enterPressed then -- enterPressed = true when user presses Enter
+		    window:Notify("Promo Code", "Entered code: " .. tostring(text))
+	    end
+    end)
+}
 
--- ====================================================================
--- TAB 2: PLAYER (SLIDER, INPUT)
--- ====================================================================
+local setting = {
+    tab.Setting:AddSection("Nothing bluh"),
+    tab.Setting:AddLabel("Nothing")
+}
 
-PlayerTab:AddSection("⚡ Player Stats")
-
--- [SLIDER]: Adjustable numeric slider with minimum, maximum, and default values
--- Parameters: ("Slider Name", Min, Max, Default, Callback Function)
-PlayerTab:AddSlider("WalkSpeed", 16, 200, 16, function(value)
-	local char = game.Players.LocalPlayer.Character
-	if char and char:FindFirstChild("Humanoid") then
-		char.Humanoid.WalkSpeed = value
-	end
-end)
-
-PlayerTab:AddSlider("JumpPower", 50, 300, 50, function(value)
-	local char = game.Players.LocalPlayer.Character
-	if char and char:FindFirstChild("Humanoid") then
-		char.Humanoid.JumpPower = value
-	end
-end)
-
-PlayerTab:AddSection("📝 Data Input")
-
--- [INPUT]: Text input box for user strings or numerical data
--- Parameters: ("Feature Name", "Placeholder Text", Callback Function)
-PlayerTab:AddInput("Redeem Promo Code", "Enter code here...", function(text, enterPressed)
-	if enterPressed then -- enterPressed = true when user presses Enter
-		print("Submitted code:", text)
-		window:Notify("Promo Code", "Entered code: " .. tostring(text))
-	end
-end)
-
--- ====================================================================
--- TAB 3: MISC (NOTIFICATIONS & SYSTEM)
--- ====================================================================
-
-MiscTab:AddSection("⚙️ System & Notifications")
-
--- [NOTIFY]: Displays a popup notification on the bottom-right of the screen
-MiscTab:AddButton("Test Notification", "Trigger", function()
-	window:Notify("Sample Notification", "This is a test notification message!", 4) -- Auto-hide after 4 seconds
-end)
